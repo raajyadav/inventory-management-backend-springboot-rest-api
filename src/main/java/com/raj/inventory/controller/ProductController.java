@@ -3,6 +3,8 @@ package com.raj.inventory.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.raj.inventory.entity.Product;
 import com.raj.inventory.service.ProductServiceImpl;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -24,32 +28,47 @@ public class ProductController {
 	
 	// CREATE PRODUCT
 	@PostMapping
-	public Product createProduct(@RequestBody Product product) {
-		return productServiceImpl.createProduct(product);
+	public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
+		return new ResponseEntity<>(
+				productServiceImpl.createProduct(product),
+				HttpStatus.CREATED
+				);
 	}
 	
 	// GET ALL PRODUCTS
 	@GetMapping
-	public List<Product> getAllProducts(){
-		return productServiceImpl.getAllProducts();
+	public ResponseEntity<List<Product>> getAllProducts(){
+		return new ResponseEntity<>(
+				productServiceImpl.getAllProducts(),
+				HttpStatus.OK
+				);
 	}
 	
 	// GET PRODUCT BY ID
 	@GetMapping("/{id}")
-	public Product getProductById(@PathVariable Long id) {
-		return productServiceImpl.getProductById(id);
+	public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+		return new ResponseEntity<>(
+				productServiceImpl.getProductById(id),
+				HttpStatus.OK
+				);
 	}
 	
 	// UPDATE PRODUCT
 	@PutMapping("/{id}")
-	public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-		return productServiceImpl.updateProduct(id, product);
+	public ResponseEntity<Product> updateProduct(@Valid @PathVariable Long id, @RequestBody Product product) {
+		return new ResponseEntity<>(
+				productServiceImpl.updateProduct(id, product),
+				HttpStatus.OK
+				);
+		
 	}
 	
 	// DELETE PRODUCT
-	@DeleteMapping("/{delete}")
-	public String deleteProduct(@PathVariable Long id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
 		 productServiceImpl.deleteProduct(id);
-		 return "Product Deleted Successfully";
+		 return new ResponseEntity<>("Product Deleted Successfully",
+				 HttpStatus.OK
+				 );
 	}
 }
